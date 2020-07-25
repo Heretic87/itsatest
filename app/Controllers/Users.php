@@ -1,5 +1,8 @@
 <?php namespace App\Controllers;
 
+use App\Models\UserModel;
+
+
 class Users extends BaseController
 {
 	public function index()
@@ -37,6 +40,20 @@ class Users extends BaseController
 			else
 			{
 				// creo l'utente nel database
+				$model = new UserModel();
+				$newData = [
+					'firstname' => $this->request->getVar('firstname'),
+					'lastname' => $this->request->getVar('lastname'),
+					'email' => $this->request->getVar('email'),
+					'password' => $this->request->getVar('password')
+				];
+
+				$model->save($newData);
+				$session = session();
+
+				$session->setFlashdata('success', 'Successful Registration');
+				return redirect()->to('/');
+
 			}
 		
 		}
