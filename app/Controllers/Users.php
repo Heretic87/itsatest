@@ -113,4 +113,62 @@ class Users extends BaseController
 		echo view('register', $data);
 		echo view('template/footer', $data);
 	}
+
+	public function profile()
+	{
+		$data = [];
+		helper(['form']);
+		$model = new UserModel();
+		if ($this->request->getMethod() == 'post')
+		{
+			//  se è una richiesta post allora faccio la validazione del modulo
+			$rules = [
+				'firstname' => 'required|min_length[3]|max_length[20]',
+				'lastname' => 'required|min_length[3]|max_length[20]',
+			];
+
+			if($this->request->getPost('password') != '')
+			{
+				$rules['password'] = 'required|min_length[8]|max_length[255]';
+				$rules['password_confirm'] = 'matches[password]';
+			}
+
+			if(!$this->validate($rules))
+			{
+				// se il form non è valido
+				$data['validation'] = $this->validator;
+			}
+			else
+			{
+				// creo l'utente nel database
+				$model = new UserModel();
+				$newData = [
+					'id' => session()->get('id'),
+					'firstname' => $this->request->getVar('firstname'),
+					'lastname' => $this->request->getVar('lastname'),
+				];
+
+				if($this->request->getPost('password') != '')
+				{
+					$newdata['password'] = $this->request->getVar('password');
+				}
+
+				$model->save($newData);
+
+				session()->setFlashdata('success', 'Successfully updated!');
+				return redirect()->to('/profile');
+			}
+		}
+
+		$data['user'] = $model->where('id', session()->get('id'))->first();
+		echo view('template/header', $data);
+		echo view('profile', $data);
+		echo view('template/footer', $data);
+	}
+
+	public function logout()
+	{
+		session()->destroy();
+		return redirect()->to('/');
+	}
 }
