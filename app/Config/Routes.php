@@ -35,6 +35,8 @@ $routes->get('/logout', 'Users::logout');
 $routes->match(['get', 'post'], '/register', 'Users::register', ['filter' => 'noauth']);
 $routes->match(['get', 'post'], '/profile', 'Users::profile', ['filter' => 'auth']);
 $routes->match(['get', 'post'], '/dashboard', 'Dashboard::index', ['filter' => 'auth']);
+$routes->match(['get', 'post'], '/create', 'Dashboard::createAccount', ['filter' => 'auth']);
+$routes->match(['get', 'post'], '/deleteaccount', 'Dashboard::deleteAccount', ['filter' => 'auth']);
 
 /**
  * --------------------------------------------------------------------
